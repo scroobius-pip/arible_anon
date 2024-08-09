@@ -1,0 +1,89 @@
+{
+    "title": "Redactor",
+    "description": "Redact Sensitive Information From Photos Automatically",
+    "endpoint": "https://us-central1-arible.cloudfunctions.net/arible_redact",
+    "fields": [
+        {
+            "name": "images",
+            "title": "Upload Image",
+            "description": "Upload Image with private info.",
+            "type": "File",
+            "mimeTypes": [
+                "image/jpeg",
+                "image/png",
+                "image/bmp"
+            ],
+            "base64": true,
+            "validation": {
+                "allOf": [
+                    {
+                        "min": 1,
+                        "message": "We need an image"
+                    },
+                    {
+                        "max": 1,
+                        "message": "Don't be greedy :)"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "selected_types",
+            "type": "Option",
+            "description": "Select the type of information you want censored",
+            "title": "Censor Type",
+            "items": [
+                {
+                    "title": "Personal Information",
+                    "description": "DOB, Email, Ages, Names, Gender, Phone Numbers",
+                    "value": "EMAIL_ADDRESS,PERSON_NAME,LAST_NAME,FIRST_NAME,AGE,GENDER,PHONE_NUMBER"
+                },
+                {
+                    "title": "Address",
+                    "description": "Someone's place of birth, residence, citizenship",
+                    "value": "COUNTRY_DEMOGRAPHIC,STREET_ADDRESS,ORGANIZATION_NAME,LOCATION"
+                },
+                {
+                    "title": "Credentials",
+                    "description": "Server-side secrets, access tokens, passwords, credit card numbers",
+                    "value": "AUTH_TOKEN,AWS_CREDENTIALS,BASIC_AUTH_HEADER,PASSWORD,OAUTH_CLIENT_SECRET,JSON_WEB_TOKEN,HTTP_COOKIE,ENCRYPTION_KEY,CREDIT_CARD_NUMBER"
+                },
+                {
+                    "title": "Time",
+                    "description": "Dates, time of the day & other temporal information",
+                    "value": "TIME,DATE,DATE_OF_BIRTH"
+                }
+            ],
+            "max": 10,
+            "depends": {
+                "allOf": [
+                    {
+                        "falsy": "{{redact_all}}"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "redact_all",
+            "type": "Switch",
+            "title": "Censor All",
+            "description": "Censor all text in image",
+            "defaultValue": false
+        },
+        {
+            "name": "custom_color",
+            "title": "Custom Color",
+            "type": "Switch",
+            "defaultValue": false,
+            "description": "Use a differently color from the default black bar"
+        },
+        {
+            "name": "color",
+            "title": "Color",
+            "description": "Color Hex (Optional)",
+            "type": "Text",
+            "defaultValue": "#000",
+            "depends": "{{custom_color}}"
+        }
+    ]
+}
